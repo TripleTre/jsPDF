@@ -25,7 +25,6 @@
  */
 
 import { jsPDF } from "../jspdf.js";
-import { zlibSync } from "../libs/fflate.js";
 import { PNG } from "../libs/png.js";
 
 /**

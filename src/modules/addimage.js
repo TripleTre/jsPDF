@@ -41,162 +41,10 @@ import { atob, btoa } from "../libs/AtobBtoa.js";
   var namespace = "addImage_";
   jsPDFAPI.__addimage__ = {};
 
-  var UNKNOWN = "UNKNOWN";
-
   // Heuristic selection of a good batch for large array .apply. Not limiting make the call overflow.
   // With too small batch iteration will be slow as more calls are made,
   // higher values cause larger and slower garbage collection.
   var ARRAY_APPLY_BATCH = 8192;
-
-  var imageFileTypeHeaders = {
-    PNG: [[0x89, 0x50, 0x4e, 0x47]],
-    TIFF: [
-      [0x4d, 0x4d, 0x00, 0x2a], //Motorola
-      [0x49, 0x49, 0x2a, 0x00] //Intel
-    ],
-    JPEG: [
-      [
-        0xff,
-        0xd8,
-        0xff,
-        0xe0,
-        undefined,
-        undefined,
-        0x4a,
-        0x46,
-        0x49,
-        0x46,
-        0x00
-      ], //JFIF
-      [
-        0xff,
-        0xd8,
-        0xff,
-        0xe1,
-        undefined,
-        undefined,
-        0x45,
-        0x78,
-        0x69,
-        0x66,
-        0x00,
-        0x00
-      ], //Exif
-      [0xff, 0xd8, 0xff, 0xdb], //JPEG RAW
-      [0xff, 0xd8, 0xff, 0xee] //EXIF RAW
-    ],
-    JPEG2000: [[0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20]],
-    GIF87a: [[0x47, 0x49, 0x46, 0x38, 0x37, 0x61]],
-    GIF89a: [[0x47, 0x49, 0x46, 0x38, 0x39, 0x61]],
-    WEBP: [
-      [
-        0x52,
-        0x49,
-        0x46,
-        0x46,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        0x57,
-        0x45,
-        0x42,
-        0x50
-      ]
-    ],
-    BMP: [
-      [0x42, 0x4d], //BM - Windows 3.1x, 95, NT, ... etc.
-      [0x42, 0x41], //BA - OS/2 struct bitmap array
-      [0x43, 0x49], //CI - OS/2 struct color icon
-      [0x43, 0x50], //CP - OS/2 const color pointer
-      [0x49, 0x43], //IC - OS/2 struct icon
-      [0x50, 0x54] //PT - OS/2 pointer
-    ]
-  };
-
-  /**
-   * Recognize filetype of Image by magic-bytes
-   *
-   * https://en.wikipedia.org/wiki/List_of_file_signatures
-   *
-   * @name getImageFileTypeByImageData
-   * @public
-   * @function
-   * @param {string|arraybuffer} imageData imageData as binary String or arraybuffer
-   * @param {string} format format of file if filetype-recognition fails, e.g. 'JPEG'
-   *
-   * @returns {string} filetype of Image
-   */
-  var getImageFileTypeByImageData = (jsPDFAPI.__addimage__.getImageFileTypeByImageData = function(
-    imageData,
-    fallbackFormat
-  ) {
-    fallbackFormat = fallbackFormat || UNKNOWN;
-    var i;
-    var j;
-    var result = UNKNOWN;
-    var headerSchemata;
-    var compareResult;
-    var fileType;
-
-    if (
-      fallbackFormat === "RGBA" ||
-      (imageData.data !== undefined &&
-        imageData.data instanceof Uint8ClampedArray &&
-        "height" in imageData &&
-        "width" in imageData)
-    ) {
-      return "RGBA";
-    }
-
-    if (isArrayBufferView(imageData)) {
-      for (fileType in imageFileTypeHeaders) {
-        headerSchemata = imageFileTypeHeaders[fileType];
-        for (i = 0; i < headerSchemata.length; i += 1) {
-          compareResult = true;
-          for (j = 0; j < headerSchemata[i].length; j += 1) {
-            if (headerSchemata[i][j] === undefined) {
-              continue;
-            }
-            if (headerSchemata[i][j] !== imageData[j]) {
-              compareResult = false;
-              break;
-            }
-          }
-          if (compareResult === true) {
-            result = fileType;
-            break;
-          }
-        }
-      }
-    } else {
-      for (fileType in imageFileTypeHeaders) {
-        headerSchemata = imageFileTypeHeaders[fileType];
-        for (i = 0; i < headerSchemata.length; i += 1) {
-          compareResult = true;
-          for (j = 0; j < headerSchemata[i].length; j += 1) {
-            if (headerSchemata[i][j] === undefined) {
-              continue;
-            }
-            if (headerSchemata[i][j] !== imageData.charCodeAt(j)) {
-              compareResult = false;
-              break;
-            }
-          }
-          if (compareResult === true) {
-            result = fileType;
-            break;
-          }
-        }
-      }
-    }
-
-    if (result === UNKNOWN && fallbackFormat !== UNKNOWN) {
-      result = fallbackFormat;
-    }
-    return result;
-  });
-
   // Image functionality ported from pdf.js
   var putImage = function(image) {
     var out = this.internal.write;
@@ -370,63 +218,6 @@ import { atob, btoa } from "../libs/AtobBtoa.js";
 
   var isImageTypeSupported = function(type) {
     return typeof jsPDFAPI["process" + type.toUpperCase()] === "function";
-  };
-
-  var isDOMElement = function(object) {
-    return typeof object === "object" && object.nodeType === 1;
-  };
-
-  var getImageDataFromElement = function(element, format) {
-    //if element is an image which uses data url definition, just return the dataurl
-    if (element.nodeName === "IMG" && element.hasAttribute("src")) {
-      var src = "" + element.getAttribute("src");
-
-      //is base64 encoded dataUrl, directly process it
-      if (src.indexOf("data:image/") === 0) {
-        return atob(
-          unescape(src)
-            .split("base64,")
-            .pop()
-        );
-      }
-
-      //it is probably an url, try to load it
-      var tmpImageData = jsPDFAPI.loadFile(src, true);
-      if (tmpImageData !== undefined) {
-        return tmpImageData;
-      }
-    }
-
-    if (element.nodeName === "CANVAS") {
-      if (element.width === 0 || element.height === 0) {
-        throw new Error(
-          "Given canvas must have data. Canvas width: " +
-            element.width +
-            ", height: " +
-            element.height
-        );
-      }
-      var mimeType;
-      switch (format) {
-        case "PNG":
-          mimeType = "image/png";
-          break;
-        case "WEBP":
-          mimeType = "image/webp";
-          break;
-        case "JPEG":
-        case "JPG":
-        default:
-          mimeType = "image/jpeg";
-          break;
-      }
-      return atob(
-        element
-          .toDataURL(mimeType, 1.0)
-          .split("base64,")
-          .pop()
-      );
-    }
   };
 
   var checkImagesForAlias = function(alias) {
@@ -802,43 +593,14 @@ import { atob, btoa } from "../libs/AtobBtoa.js";
     var imageData, format, x, y, w, h, alias, compression, rotation;
 
     imageData = arguments[0];
-    if (typeof arguments[1] === "number") {
-      format = UNKNOWN;
-      x = arguments[1];
-      y = arguments[2];
-      w = arguments[3];
-      h = arguments[4];
-      alias = arguments[5];
-      compression = arguments[6];
-      rotation = arguments[7];
-    } else {
-      format = arguments[1];
-      x = arguments[2];
-      y = arguments[3];
-      w = arguments[4];
-      h = arguments[5];
-      alias = arguments[6];
-      compression = arguments[7];
-      rotation = arguments[8];
-    }
-
-    if (
-      typeof imageData === "object" &&
-      !isDOMElement(imageData) &&
-      "imageData" in imageData
-    ) {
-      var options = imageData;
-
-      imageData = options.imageData;
-      format = options.format || format || UNKNOWN;
-      x = options.x || x || 0;
-      y = options.y || y || 0;
-      w = options.w || options.width || w;
-      h = options.h || options.height || h;
-      alias = options.alias || alias;
-      compression = options.compression || compression;
-      rotation = options.rotation || options.angle || rotation;
-    }
+    format = arguments[1];
+    x = arguments[2];
+    y = arguments[3];
+    w = arguments[4];
+    h = arguments[5];
+    alias = arguments[6];
+    compression = arguments[7];
+    rotation = arguments[8];
 
     //If compression is not explicitly set, determine if we should use compression
     var filter = this.internal.getFilters();
@@ -867,29 +629,11 @@ import { atob, btoa } from "../libs/AtobBtoa.js";
 
   var processImageData = function(imageData, format, alias, compression) {
     var result, dataAsBinaryString;
+    imageData = unescape(imageData);
+    var tmpImageData = convertBase64ToBinaryString(imageData, false);
+    imageData = tmpImageData;
 
-    if (
-      typeof imageData === "string" &&
-      getImageFileTypeByImageData(imageData) === UNKNOWN
-    ) {
-      imageData = unescape(imageData);
-      var tmpImageData = convertBase64ToBinaryString(imageData, false);
-
-      if (tmpImageData !== "") {
-        imageData = tmpImageData;
-      } else {
-        tmpImageData = jsPDFAPI.loadFile(imageData, true);
-        if (tmpImageData !== undefined) {
-          imageData = tmpImageData;
-        }
-      }
-    }
-
-    if (isDOMElement(imageData)) {
-      imageData = getImageDataFromElement(imageData, format);
-    }
-
-    format = getImageFileTypeByImageData(imageData, format);
+    format = "PNG";
     if (!isImageTypeSupported(format)) {
       throw new Error(
         "addImage does not support files of type '" +
@@ -978,25 +722,11 @@ import { atob, btoa } from "../libs/AtobBtoa.js";
   jsPDFAPI.getImageProperties = function(imageData) {
     var image;
     var tmpImageData = "";
-    var format;
+    var format = "PNG";
 
-    if (isDOMElement(imageData)) {
-      imageData = getImageDataFromElement(imageData);
-    }
+    tmpImageData = convertBase64ToBinaryString(imageData, false);
+    imageData = tmpImageData;
 
-    if (
-      typeof imageData === "string" &&
-      getImageFileTypeByImageData(imageData) === UNKNOWN
-    ) {
-      tmpImageData = convertBase64ToBinaryString(imageData, false);
-
-      if (tmpImageData === "") {
-        tmpImageData = jsPDFAPI.loadFile(imageData) || "";
-      }
-      imageData = tmpImageData;
-    }
-
-    format = getImageFileTypeByImageData(imageData);
     if (!isImageTypeSupported(format)) {
       throw new Error(
         "addImage does not support files of type '" +
