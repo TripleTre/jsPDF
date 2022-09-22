@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 2.5.1 Built on 2022-09-21T05:46:24.222Z
+ * Version 0.0.1 Built on 2022-09-21T06:30:05.890Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -1455,7 +1455,7 @@
    * @memberof jsPDF#
    */
 
-  jsPDF.version = "2.5.1";
+  jsPDF.version = "0.0.1";
 
   /** @license
    * jsPDF addImage plugin
@@ -3533,8 +3533,28 @@
     };
   })(jsPDF.API);
 
-  exports.default = jsPDF;
-  exports.jsPDF = jsPDF;
+  function png2pdf(config) {
+    var doc = new jsPDF({
+      format: [config.pageWidth, config.pageHeight]
+    });
+
+    for (var i = 0, iLen = config.pages.length; i < iLen; i++) {
+      var page = config.pages[i];
+
+      for (var p = 0, pLen = page.images; p < pLen; p++) {
+        var image = page.images[p];
+        doc.addImage(image.dataUrl, "PNG", image.x, image.y, image.w, image.h);
+      }
+
+      if (i < iLen - 1) {
+        doc.addPage();
+      }
+    }
+
+    return doc.output("arraybuffer");
+  }
+
+  exports.png2pdf = png2pdf;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

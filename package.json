@@ -1,8 +1,7 @@
 {
-  "name": "jspdf",
-  "version": "2.5.1",
-  "homepage": "https://github.com/mrrio/jspdf",
-  "description": "PDF Document creation from JavaScript",
+  "name": "png2pdf",
+  "version": "0.0.1",
+  "description": "Tiny jsPdf only support png",
   "main": "dist/jspdf.node.min.js",
   "module": "dist/jspdf.es.min.js",
   "browser": "dist/jspdf.es.min.js",
@@ -18,10 +17,6 @@
     "pdf"
   ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MrRio/jsPDF.git"
-  },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
     "atob": "^2.1.2",
