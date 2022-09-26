@@ -2,9 +2,9 @@
   "name": "png2pdf",
   "version": "0.0.1",
   "description": "Tiny jsPdf only support png",
-  "main": "dist/jspdf.node.min.js",
-  "module": "dist/jspdf.es.min.js",
-  "browser": "dist/jspdf.es.min.js",
+  "main": "dist/png2pdf.node.min.js",
+  "module": "dist/png2pdf.es.min.js",
+  "browser": "dist/png2pdf.es.min.js",
   "files": [
     "dist",
     "types/index.d.ts",

@@ -47,16 +47,16 @@ const umd = {
   input: "src/index.js",
   output: [
     {
-      file: "dist/jspdf.umd.js",
+      file: "dist/png2pdf.umd.js",
       format: "umd",
-      name: "jspdf",
+      name: "png2pdf",
       exports: "named",
       sourcemap: true
     },
     {
-      file: "dist/jspdf.umd.min.js",
+      file: "dist/png2pdf.umd.min.js",
       format: "umd",
-      name: "jspdf",
+      name: "png2pdf",
       plugins: [terser({})],
       exports: "named",
       sourcemap: true
@@ -79,14 +79,14 @@ const es = {
     {
       file: pkg.module.replace(".min", ""),
       format: "es",
-      name: "jspdf",
+      name: "png2pdf",
       sourcemap: true,
       plugins: []
     },
     {
       file: pkg.module,
       format: "es",
-      name: "jspdf",
+      name: "png2pdf",
       sourcemap: true,
       plugins: [terser({})]
     }
@@ -106,7 +106,7 @@ const node = {
     {
       file: pkg.main.replace(".min", ""),
       format: "cjs",
-      name: "jspdf",
+      name: "png2pdf",
       exports: "named",
       sourcemap: true,
       plugins: []
@@ -114,7 +114,7 @@ const node = {
     {
       file: pkg.main,
       format: "cjs",
-      name: "jspdf",
+      name: "png2pdf",
       exports: "named",
       sourcemap: true,
       plugins: [terser({})]
@@ -135,7 +135,7 @@ const umdPolyfills = {
     {
       file: "dist/polyfills.umd.js",
       format: "umd",
-      name: "jspdf-polyfills",
+      name: "png2pdf-polyfills",
       plugins: [terser({})]
     }
   ],
@@ -158,7 +158,7 @@ const esPolyfills = {
     {
       file: "dist/polyfills.es.js",
       format: "es",
-      name: "jspdf-polyfills",
+      name: "png2pdf-polyfills",
       plugins: [terser({})]
     }
   ],

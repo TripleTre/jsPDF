@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 0.0.1 Built on 2022-09-21T06:30:05.890Z
+ * Version 0.0.1 Built on 2022-09-26T03:51:22.871Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -51,7 +51,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.jspdf = {}));
+  (global = global || self, factory(global.png2pdf = {}));
 }(this, (function (exports) { 'use strict';
 
   function _typeof(obj) {
@@ -3539,10 +3539,10 @@
     });
 
     for (var i = 0, iLen = config.pages.length; i < iLen; i++) {
-      var page = config.pages[i];
+      var images = config.pages[i];
 
-      for (var p = 0, pLen = page.images; p < pLen; p++) {
-        var image = page.images[p];
+      for (var p = 0, pLen = images.length; p < pLen; p++) {
+        var image = images[p];
         doc.addImage(image.dataUrl, "PNG", image.x, image.y, image.w, image.h);
       }
 
@@ -3559,4 +3559,4 @@
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=jspdf.umd.js.map
+//# sourceMappingURL=png2pdf.umd.js.map

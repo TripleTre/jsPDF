@@ -53,13 +53,13 @@ declare module "png2pdf" {
   export interface PngConfig {
     pageWidth: number;
     pageHeight: number;
-    images: {
+    pages: Array<{
       dataUrl: string;
       x: number;
       y: number;
       w: number;
       h: number;
-    }[];
+    }[]>;
   }
   export function png2pdf(config: PngConfig): ArrayBuffer;
 }
