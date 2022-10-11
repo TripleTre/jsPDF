@@ -15,7 +15,5 @@ export function png2pdf(config) {
             doc.addPage();
         }
     }
-    return doc; // doc.output("arraybuffer");
+    return doc.output("arraybuffer");
 }
-
-window.__png2pdf = png2pdf;

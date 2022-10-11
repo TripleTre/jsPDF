@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 0.0.1 Built on 2022-10-11T10:24:24.047Z
+ * Version 0.0.2 Built on 2022-10-11T10:32:14.296Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -1436,7 +1436,7 @@ jsPDF.API = {
  * @memberof jsPDF#
  */
 
-jsPDF.version = "0.0.1";
+jsPDF.version = "0.0.2";
 
 /** @license
  * jsPDF addImage plugin
@@ -3154,9 +3154,8 @@ function png2pdf(config) {
     }
   }
 
-  return doc; // doc.output("arraybuffer");
+  return doc.output("arraybuffer");
 }
-window.__png2pdf = png2pdf;
 
 export { png2pdf };
 //# sourceMappingURL=png2pdf.es.js.map
