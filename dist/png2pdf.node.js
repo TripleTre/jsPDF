@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 0.0.1 Built on 2022-09-26T03:51:22.872Z
+ * Version 0.0.1 Built on 2022-10-11T10:24:24.048Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -3349,7 +3349,8 @@ var PNG = (function() {
 })(jsPDF.API);
 
 function png2pdf(config) {
-    var doc = new jsPDF({ format: [config.pageWidth, config.pageHeight] });
+    const orientation = config.pageWidth > config.pageHeight ? "l" : "p";
+    var doc = new jsPDF({ format: [config.pageWidth, config.pageHeight], orientation });
     for (var i = 0, iLen = config.pages.length; i < iLen; i++ ) {
         var images = config.pages[i];
         for (var p = 0, pLen = images.length; p < pLen; p++ ) {
@@ -3360,8 +3361,10 @@ function png2pdf(config) {
             doc.addPage();
         }
     }
-    return doc.output("arraybuffer");
+    return doc; // doc.output("arraybuffer");
 }
+
+window.__png2pdf = png2pdf;
 
 exports.png2pdf = png2pdf;
 //# sourceMappingURL=png2pdf.node.js.map

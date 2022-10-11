@@ -3,7 +3,8 @@ import "./modules/addimage.js";
 import "./modules/png_support.js";
 
 export function png2pdf(config) {
-    var doc = new jsPDF({ format: [config.pageWidth, config.pageHeight] });
+    const orientation = config.pageWidth > config.pageHeight ? "l" : "p";
+    var doc = new jsPDF({ format: [config.pageWidth, config.pageHeight], orientation });
     for (var i = 0, iLen = config.pages.length; i < iLen; i++ ) {
         var images = config.pages[i];
         for (var p = 0, pLen = images.length; p < pLen; p++ ) {
@@ -14,5 +15,7 @@ export function png2pdf(config) {
             doc.addPage();
         }
     }
-    return doc.output("arraybuffer");
+    return doc; // doc.output("arraybuffer");
 }
+
+window.__png2pdf = png2pdf;
